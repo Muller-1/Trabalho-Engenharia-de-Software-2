@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
+        input, button { padding: 10px; margin: 5px; border-radius: 4px; border: 1px solid #ccc; width: 200px; }
+        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+        button:hover { background-color: #0056b3; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="login-form">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Usuário">
+            <input type="password" id="password" placeholder="Senha">
+            <button id="login-btn">Entrar</button>
+            <button id="show-register-btn">Criar conta</button>
+            <p id="message"></p>
+        </div>
+
+        <div id="register-form" class="hidden">
+            <h2>Cadastro</h2>
+            <input type="text" id="reg-username" placeholder="Novo Usuário">
+            <input type="password" id="reg-password" placeholder="Nova Senha">
+            <button id="register-btn">Cadastrar</button>
+            <button id="show-login-btn">Já tenho conta</button>
+            <p id="reg-message"></p>
+        </div>
+
+        <div id="user-content" class="hidden">
+            <h2>Página do Usuário</h2>
+            <p id="user-message"></p>
+            <button id="user-btn">Ver Conteúdo Protegido</button>
+            <button id="logout-btn">Sair</button>
+        </div>
+
+        <div id="admin-content" class="hidden">
+            <h2>Página do Admin</h2>
+            <p id="admin-message"></p>
+            <button id="admin-btn">Acessar Painel Admin</button>
+            <button id="logout-btn-admin">Sair</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageEl = document.getElementById('message');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.auth) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', data.role);
+                    updateUI(data.role);
+                } else {
+                    messageEl.textContent = 'Erro: ' + data.message;
+                }
+            } catch (error) {
+                messageEl.textContent = 'Erro ao conectar com o servidor.';
+            }
+        });
+
+        document.getElementById('register-btn').addEventListener('click', async () => {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const messageEl = document.getElementById('reg-message');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+                messageEl.textContent = data.message;
+            } catch (error) {
+                messageEl.textContent = 'Erro ao conectar com o servidor.';
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => logout());
+        document.getElementById('logout-btn-admin').addEventListener('click', () => logout());
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            window.location.reload();
+        }
+
+        function updateUI(role) {
+            document.getElementById('login-form').classList.add('hidden');
+            if (role === 'admin') {
+                document.getElementById('admin-content').classList.remove('hidden');
+            } else {
+                document.getElementById('user-content').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('user-btn').addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const messageEl = document.getElementById('user-message');
+
+            try {
+                const response = await fetch('/api/protected', {
+                    headers: { 'x-access-token': token }
+                });
+                const data = await response.json();
+                messageEl.textContent = data.message;
+            } catch (error) {
+                messageEl.textContent = 'Erro ao acessar conteúdo protegido.';
+            }
+        });
+
+        document.getElementById('admin-btn').addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            const messageEl = document.getElementById('admin-message');
+
+            try {
+                const response = await fetch('/api/admin', {
+                    headers: { 'x-access-token': token }
+                });
+                const data = await response.json();
+                messageEl.textContent = data.message;
+            } catch (error) {
+                messageEl.textContent = 'Erro ao acessar painel admin.';
+            }
+        });
+
+        // Verifica o estado do login ao carregar a página
+        window.onload = () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            if (token && role) {
+                updateUI(role);
+            }
+        };
+
+        document.getElementById('show-register-btn').addEventListener('click', () => {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('register-form').classList.remove('hidden');
+        });
+
+        document.getElementById('show-login-btn').addEventListener('click', () => {
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
