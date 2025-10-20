@@ -3,79 +3,149 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const cors = require('cors');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = 3000;
-const SECRET_KEY = 'sua-chave-secreta'; // Substitua por uma chave forte em produção!
+const SECRET_KEY = 'sua-chave-secreta';
+
+// Configuração do PostgreSQL
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'Site Jiu Jitsu',
+    password: '123456',
+    port: 5432,
+});
 
 app.use(cors());
-app.use(express.json()); // Habilita o servidor a receber JSON
+app.use(express.json());
 
-// Simulação de banco de dados
-const users = [
-    { username: 'usuario1', passwordHash: bcrypt.hashSync('senha123', 8), role: 'user' },
-    { username: 'admin', passwordHash: bcrypt.hashSync('1234', 8), role: 'admin' },
-];
-
-// Rota para a página de login
+// Servindo a página de login
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'Login.html'));
 });
 
-// Rota de login
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
-
-    const user = users.find(u => u.username === username);
-
-    if (!user) {
-        return res.status(401).send({ message: 'Credenciais inválidas.' });
+// Rota de registro
+app.post('/api/register', verifyToken, async (req, res) => {
+    if (req.userRole !== 'admin') {
+        return res.status(403).send({ message: 'Acesso negado. Apenas administradores podem criar novos usuários.' });
     }
-
-    const passwordIsValid = bcrypt.compareSync(password, user.passwordHash);
-
-    if (!passwordIsValid) {
-        return res.status(401).send({ message: 'Credenciais inválidas.' });
-    }
-
-    const token = jwt.sign(
-        { id: user.username, role: user.role }, 
-        SECRET_KEY, 
-        { expiresIn: 86400 } // Token expira em 24 horas
-    );
-
-    res.status(200).send({ auth: true, token: token, role: user.role });
-});
-
-app.post('/api/register', (req, res) => {
-    const { username, password } = req.body;
-
-    // Verifica se o usuário já existe
-    const userExists = users.find(u => u.username === username);
-    if (userExists) {
-        return res.status(409).send({ message: 'Usuário já existe.' });
-    }
-
-    // Cria o novo usuário e o adiciona à "lista de usuários"
-    const newUser = {
-        username: username,
-        passwordHash: bcrypt.hashSync(password, 8),
-        role: 'user' // Por padrão, novos usuários são 'user'
-    };
-
-    users.push(newUser);
     
-    // Opcional: gera um token para logar o usuário automaticamente após o cadastro
-    const token = jwt.sign(
-        { id: newUser.username, role: newUser.role }, 
-        SECRET_KEY, 
-        { expiresIn: 86400 }
-    );
+    const { username, password } = req.body; 
 
-    res.status(201).send({ auth: true, token: token, role: newUser.role, message: 'Usuário registrado com sucesso!' });
+    try {
+        const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+        if (result.rows.length > 0) {
+            return res.status(409).send({ message: 'Usuário já existe.' });
+        }
+
+        const passwordHash = bcrypt.hashSync(password, 8);
+        
+        await pool.query('INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)', [username, passwordHash, 'user']);
+
+        res.status(201).send({ message: 'Novo usuário registrado com sucesso!' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Erro no servidor.' });
+    }
 });
 
-// Middleware para verificar o token
+// Rota de login
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+        if (result.rows.length === 0) {
+            return res.status(401).send({ message: 'Credenciais inválidas.' });
+        }
+
+        const user = result.rows[0];
+        const passwordIsValid = bcrypt.compareSync(password, user.password_hash);
+
+        if (!passwordIsValid) {
+            return res.status(401).send({ message: 'Credenciais inválidas.' });
+        }
+
+        const token = jwt.sign(
+            { id: user.username, role: user.role },
+            SECRET_KEY,
+            { expiresIn: 86400 }
+        );
+
+        res.status(200).send({ auth: true, token: token, role: user.role });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Erro no servidor.' });
+    }
+});
+
+app.post('/api/events', verifyToken, async (req, res) => {
+    if (req.userRole !== 'admin') {
+        return res.status(403).json({ message: 'Access denied. Only for administrators.' });
+    }
+
+    const { event_name, description, start_datetime, end_datetime='' } = req.body;
+
+    try {
+        const query = `INSERT INTO events (event_name, description, start_datetime, end_datetime) VALUES ($1, $2, $3, $4) RETURNING *;`;
+        const values = [event_name, description, start_datetime, end_datetime];
+        const result = await pool.query(query, values);
+
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error creating event:', error);
+        res.status(500).json({ message: 'Error creating event.' });
+    }
+});
+
+app.put('/api/events/:id', verifyToken, async (req, res) => {
+    if (req.userRole !== 'admin') {
+        return res.status(403).json({ message: 'Access denied. Only for administrators.' });
+    }
+
+    const { id } = req.params;
+    const { event_name, description, start_datetime, end_datetime } = req.body;
+
+    try {
+        const query = `UPDATE events SET event_name = $1, description = $2, start_datetime = $3, end_datetime = $4 WHERE id = $5 RETURNING *;`;
+        const values = [event_name, description, start_datetime, end_datetime, id];
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error updating event:', error);
+        res.status(500).json({ message: 'Error updating event.' });
+    }
+});
+
+app.delete('/api/events/:id', verifyToken, async (req, res) => {
+    if (req.userRole !== 'admin') {
+        return res.status(403).json({ message: 'Access denied. Only for administrators.' });
+    }
+    
+    const { id } = req.params;
+
+    try {
+        const result = await pool.query('DELETE FROM events WHERE id = $1 RETURNING *;', [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Event not found.' });
+        }
+
+        res.status(200).json({ message: 'Event deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ message: 'Error deleting event.' });
+    }
+});
+
+// Middleware para verificar o token (não alterado)
 function verifyToken(req, res, next) {
     const token = req.headers['x-access-token'];
 
@@ -94,18 +164,27 @@ function verifyToken(req, res, next) {
     });
 }
 
-// Rota protegida para usuários comuns
+// Rotas protegidas (não alteradas)
 app.get('/api/protected', verifyToken, (req, res) => {
     res.status(200).send({ message: 'Bem-vindo, usuário!', role: req.userRole });
 });
 
-// Rota protegida para administradores
 app.get('/api/admin', verifyToken, (req, res) => {
     if (req.userRole !== 'admin') {
         return res.status(403).send({ message: 'Acesso negado. Apenas para administradores.' });
     }
 
     res.status(200).send({ message: 'Bem-vindo, administrador!', role: req.userRole });
+});
+
+app.get('/api/events', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM events ORDER BY start_datetime');
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ message: 'Error fetching events.' });
+    }
 });
 
 app.listen(PORT, () => {
