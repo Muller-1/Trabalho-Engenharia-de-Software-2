@@ -91,18 +91,7 @@
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo">Jiu-Jitsu</div>
-        <ul>
-            <li><a href="./index.html">Home</a></li>
-            <li><a href="#competicoes">Competições</a></li>
-            <li><a href="#patrocinadores">Patrocinadores</a></li>
-            <li><a href="./Calendario.html">Calendário</a></li>
-            <li><a href="#doacoes">Doações</a></li>
-            <li><a href="#contato">Contato</a></li>
-            <li><a href="./Login.html">Login</a></li>
-        </ul>
-    </nav>
+    <div id="navbar"></div>
 
     <h1>Calendário de Eventos - Mês Ano</h1>
 
@@ -136,6 +125,14 @@
         </div>
     </div>
 
+    <script>
+        fetch('navbar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('navbar').innerHTML = data;
+          })
+          .catch(err => console.error('Erro ao carregar o navbar:', err));
+    </script>
     <script>
     const modal = document.getElementById('event-modal');
     const closeBtn = document.querySelector('.close-btn');
@@ -202,6 +199,9 @@
                 meridiem: false, // This ensures it's 24-hour
                 hour12: false // Explicitly set to false for clarity
             },
+            buttonText: {
+                today: 'Hoje'
+            },
             events: async function(fetchInfo, successCallback, failureCallback) {
                 try {
                     const response = await fetch('http://localhost:3000/api/events');
@@ -259,8 +259,8 @@
         calendar.render();
 
         document.getElementById('create-new-event-btn').addEventListener('click', () => {
-            document.getElementById('modal-title').textContent = 'Create New Event';
-            document.getElementById('save-event-btn').textContent = 'Create Event';
+            document.getElementById('modal-title').textContent = 'Criar Novo Evento';
+            document.getElementById('save-event-btn').textContent = 'Criar Evento';
             openModal();
         });
     });

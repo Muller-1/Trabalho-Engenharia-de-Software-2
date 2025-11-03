@@ -7,19 +7,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav>
-    <div class="logo">Jiu-Jitsu</div>
-    <ul>
-      <li><a href="#home">Home</a></li>
-      <li><a href="#competicoes">Competições</a></li>
-      <li><a href="#patrocinadores">Patrocinadores</a></li>
-      <li><a href="#calendario">Calendário</a></li>
-      <li><a href="#doacoes">Doações</a></li>
-      <li><a href="#contato">Contato</a></li>
-      <li><a href="./Login.html">Login</a></li>
-    </ul>
-  </nav>
+  <div id="navbar"></div>
 
   <!-- Hero Section -->
   <section id="home" class="home">
@@ -78,5 +66,13 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar').innerHTML = data;
+      })
+      .catch(err => console.error('Erro ao carregar o navbar:', err));
+  </script>
 </body>
 </html>

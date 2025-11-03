@@ -83,7 +83,7 @@ app.post('/api/login', async (req, res) => {
 
 app.post('/api/events', verifyToken, async (req, res) => {
     if (req.userRole !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Only for administrators.' });
+        return res.status(403).json({ message: 'Acesso Negado. Somente para Administradores.' });
     }
 
     const { event_name, description, start_datetime, end_datetime='' } = req.body;
@@ -95,14 +95,14 @@ app.post('/api/events', verifyToken, async (req, res) => {
 
         res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error('Error creating event:', error);
-        res.status(500).json({ message: 'Error creating event.' });
+        console.error('Erro Criando Evento:', error);
+        res.status(500).json({ message: 'Erro Criando Evento.' });
     }
 });
 
 app.put('/api/events/:id', verifyToken, async (req, res) => {
     if (req.userRole !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Only for administrators.' });
+        return res.status(403).json({ message: 'Acesso Negado. Somente para Administradores.' });
     }
 
     const { id } = req.params;
@@ -114,19 +114,19 @@ app.put('/api/events/:id', verifyToken, async (req, res) => {
         const result = await pool.query(query, values);
 
         if (result.rowCount === 0) {
-            return res.status(404).json({ message: 'Event not found.' });
+            return res.status(404).json({ message: 'Evento não encontrado.' });
         }
 
         res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.error('Error updating event:', error);
-        res.status(500).json({ message: 'Error updating event.' });
+        console.error('Erro atualizando evento:', error);
+        res.status(500).json({ message: 'Erro atualizando evento.' });
     }
 });
 
 app.delete('/api/events/:id', verifyToken, async (req, res) => {
     if (req.userRole !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Only for administrators.' });
+        return res.status(403).json({ message: 'Acesso Negado. Somente para Administradores.' });
     }
     
     const { id } = req.params;
@@ -135,13 +135,13 @@ app.delete('/api/events/:id', verifyToken, async (req, res) => {
         const result = await pool.query('DELETE FROM events WHERE id = $1 RETURNING *;', [id]);
 
         if (result.rowCount === 0) {
-            return res.status(404).json({ message: 'Event not found.' });
+            return res.status(404).json({ message: 'Evento não encontrado.' });
         }
 
-        res.status(200).json({ message: 'Event deleted successfully.' });
+        res.status(200).json({ message: 'Evento deletado com sucesso.' });
     } catch (error) {
-        console.error('Error deleting event:', error);
-        res.status(500).json({ message: 'Error deleting event.' });
+        console.error('Erro deletando o evento:', error);
+        res.status(500).json({ message: 'Erro deletando o evento.' });
     }
 });
 
@@ -182,8 +182,8 @@ app.get('/api/events', async (req, res) => {
         const result = await pool.query('SELECT * FROM events ORDER BY start_datetime');
         res.status(200).json(result.rows);
     } catch (error) {
-        console.error('Error fetching events:', error);
-        res.status(500).json({ message: 'Error fetching events.' });
+        console.error('Erro buscando eventos:', error);
+        res.status(500).json({ message: 'Erro buscando eventos.' });
     }
 });
 
