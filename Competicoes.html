@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Cards de Lugares - Jiu-Jitsu</title>
+
+  <style>
+    /* 1. VARIÁVEIS DE COR ATUALIZADAS para o tema Claro (como o Login)
+  */
+    :root {
+      --bg: #f0f0f0;
+      /* ALTERADO: Fundo claro (igual ao login) */
+      --card: #fff;
+      /* ALTERADO: Branco para os cards (igual ao container do login) */
+      --muted: #666;
+      /* ALTERADO: Cinza mais escuro para texto secundário */
+      --accent: #f1c40f;
+      /* Amarelo (do logo) - Mantido */
+      --glass: rgba(0, 0, 0, 0.05);
+      /* ALTERADO: "Vidro" escuro para fundos de pill/borda */
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* 2. ESTILOS DA BARRA DE NAVEGAÇÃO (Mantidos)
+   A barra de navegação continua escura, assim como na página de login.
+  */
+    nav {
+      background: #111;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #333;
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent);
+      /* Amarelo */
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover {
+      color: var(--accent);
+      /* Amarelo */
+    }
+
+    /* 3. ESTILOS DA PÁGINA DE CARDS (Adaptados para o fundo claro)
+  */
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+      background: var(--bg);
+      /* ALTERADO: Agora usa o --bg claro */
+      color: #333;
+      /* ALTERADO: Texto principal escuro para legibilidade */
+      min-height: 100vh;
+    }
+
+    header,
+    main {
+      padding: 32px;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: 20px;
+      color: #333;
+      /* ALTERADO: Título principal escuro */
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      /* ALTERADO: Agora usa o --card branco */
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.18s, box-shadow 0.18s;
+      /* ALTERADO: Sombra mais suave, igual à do login */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border: 1px solid #eee;
+      /* Borda sutil */
+    }
+
+    .card:active {
+      transform: translateY(2px);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      /* ALTERADO: Sombra mais suave no hover */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .title {
+      font-weight: 600;
+      color: #333;
+      /* ALTERADO: Título do card escuro */
+      margin-bottom: 6px;
+    }
+
+    .loc {
+      font-size: 13px;
+      color: var(--muted);
+      /* ALTERADO: Agora usa o --muted mais escuro */
+      margin-bottom: 12px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      /* ALTERADO: Usa --muted mais escuro */
+    }
+
+    .pill {
+      background: #f5f5f5;
+      /* ALTERADO: Fundo cinza claro para o pill */
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #555;
+      /* Texto do pill mais escuro */
+    }
+
+    /* modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      padding: 20px;
+    }
+
+    .modal {
+      max-width: 720px;
+      width: 100%;
+      background: var(--card);
+      /* ALTERADO: Modal usa o --card branco */
+      border: 1px solid var(--glass);
+      border-radius: 12px;
+      padding: 20px;
+      /* ALTERADO: Sombra mais suave */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal h2 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      /* Mantido amarelo para destaque */
+    }
+
+    .modal .sub {
+      color: var(--muted);
+      /* ALTERADO: Usa --muted mais escuro */
+      margin-bottom: 14px;
+    }
+
+    .modal .desc {
+      line-height: 1.5;
+      color: #333;
+      /* ALTERADO: Texto do modal escuro */
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .btn {
+      background: var(--accent);
+      border: none;
+      color: #111;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .close {
+      background: transparent;
+      border: 1px solid #ddd;
+      /* ALTERADO: Borda mais visível */
+      color: var(--muted);
+      /* ALTERADO: Usa --muted mais escuro */
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 480px) {
+
+      header,
+      main {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 12px;
+      }
+
+      nav {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+
+    <div class="logo">Jiu-Jitsu</div>
+
+    <ul>
+
+      <li><a href="./index.html">Home</a></li>
+
+      <li><a href="./Competicoes.html">Competições</a></li>
+
+      <li><a href="./Patrocinio.html">Patrocinadores</a></li>
+
+      <li><a href="./Calendario.html">Calendário</a></li>
+
+      <li><a href="./Doacoes.html">Doações</a></li>
+
+      <li><a href="./Contato.html">Contato</a></li>
+
+      <li><a href="./Login.html">Login</a></li>
+
+    </ul>
+
+  </nav>
+
+
+  <header>
+
+    <h1>Explorar lugares</h1>
+
+  </header>
+
+
+  <main>
+
+    <section class="grid" id="cards">
+
+      <article class="card" tabindex="0" role="button" data-title="Praça Central" data-location="Centro — São Paulo, SP"
+        data-desc="Praça ampla com lago, área para eventos e cafés ao redor. Ideal para encontros e eventos ao ar livre. Tem Wi‑Fi público e bicicletário."
+        data-extra="Horário: 05:00–22:00 • Entrada gratuita">
+
+        <div class="title">Praça Central</div>
+
+        <div class="loc">Centro — São Paulo, SP</div>
+
+        <div class="meta">
+
+          <div class="pill">Parque</div>
+
+          <div class="pill">Grátis</div>
+
+        </div>
+
+      </article>
+
+
+      <article class="card" tabindex="0" role="button" data-title="Museu da Cidade"
+        data-location="Bairro Histórico — Salvador, BA"
+        data-desc="Acervo com história local, exposições temporárias e visitas guiadas. Loja de souvenirs e café no térreo."
+        data-extra="Ingressos: R$20 (inteira) • Seg a Sex 10:00–18:00">
+
+        <div class="title">Museu da Cidade</div>
+
+        <div class="loc">Bairro Histórico — Salvador, BA</div>
+
+        <div class="meta">
+
+          <div class="pill">Cultura</div>
+
+          <div class="pill">Pago</div>
+
+        </div>
+
+      </article>
+
+
+      <article class="card" tabindex="0" role="button" data-title="Mirante dos Ventos"
+        data-location="Zona Norte — Florianópolis, SC"
+        data-desc="Mirante com vista 360° da cidade e trilhas curtas ao redor. Bom para pôr do sol e fotografia."
+        data-extra="Acesso: trilha leve • Estacionamento próximo">
+           
+        <div class="title">Mirante dos Ventos</div>
+
+        <div class="loc">Zona Norte — Florianópolis, SC</div>
+
+        <div class="meta">
+
+          <div class="pill">Natureza</div>
+
+          <div class="pill">Livre</div>
+
+        </div>
+
+      </article>
+
+
+    </section>
+
+  </main>
+
+
+  <div class="modal-backdrop" id="modal" aria-hidden="true">
+
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <h2 id="modal-title"></h2>
+
+      <div class="sub" id="modal-location"></div>
+
+      <div class="desc" id="modal-desc"></div>
+
+      <div class="meta" style="margin-top: 12px">
+
+        <div id="modal-extra" class="pill"></div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="close" id="modal-close">Fechar</button>
+        <button class="btn" id="modal-action">Como chegar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+    // O JavaScript original dos cards foi mantido intacto
+    const cards = document.querySelectorAll(".card");
+    const modal = document.getElementById("modal");
+    const titleEl = document.getElementById("modal-title");
+    const locEl = document.getElementById("modal-location");
+    const descEl = document.getElementById("modal-desc");
+    const extraEl = document.getElementById("modal-extra");
+    const closeBtn = document.getElementById("modal-close");
+    const actionBtn = document.getElementById("modal-action");
+
+    function openModalFromCard(card) {
+      const title = card.dataset.title || "";
+      const location = card.dataset.location || "";
+      const desc = card.dataset.desc || "";
+      const extra = card.dataset.extra || "";
+      titleEl.textContent = title;
+      locEl.textContent = location;
+      descEl.textContent = desc;
+      extraEl.textContent = extra;
+      modal.style.display = "flex";
+      modal.setAttribute("aria-hidden", "false");
+      // foco para acessibilidade
+      closeBtn.focus();
+      // ação padrão: abrir Google Maps em nova aba (apenas exemplo)
+      actionBtn.onclick = () => {
+        const q = encodeURIComponent(title + " " + location);
+        window.open(
+          "https://www.google.com/maps/search/?api=1&query=" + q,
+          "_blank"
+        );
+      };
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => openModalFromCard(card));
+      card.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openModalFromCard(card);
+        }
+      });
+    });
+
+    closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+  </script>
+</body>
+
+</html>
