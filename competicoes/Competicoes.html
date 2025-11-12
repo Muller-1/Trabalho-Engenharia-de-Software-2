@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cards de Lugares - Jiu-Jitsu</title>
+
+  <!-- Link para a folha de estilo externa -->
+  <link rel="stylesheet" href="competicoes.css">
+
+</head>
+
+<body>
+
+  <!-- NAV CORRIGIDA -->
+  <nav>
+    <div class="logo">Jiu-Jitsu</div>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../competicoes/Competicoes.html">Competições</a></li>
+      <li><a href="#patrocinadores">Patrocinadores</a></li>
+      <li><a href="../Calendario.html">Calendário</a></li>
+      <li><a href="../Doacoes.html">Doações</a></li>
+      <li><a href="#contato">Contato</a></li>
+      <li><a href="../Login.html">Login</a></li>
+    </ul>
+  </nav>
+  <!-- FIM DA NAV CORRIGIDA -->
+
+
+  <header>
+    <h1>Explorar lugares</h1>
+    <button class="btn-create" id="create-btn">+ Criar Localização</button>
+  </header>
+
+
+  <main>
+    <section class="grid" id="cards">
+
+      <!-- Cards Originais - AGORA DO VALE DO ITAJAÍ -->
+      <article class="card" tabindex="0" role="button" data-id="original-1" data-title="Itajaí Open de Verão"
+        data-location="Centreventos, Itajaí - SC"
+        data-desc="Tradicional evento de verão. Áreas de luta com vista para a Marina."
+        data-extra="Inscrição: R$120 • 09:00–18:00"
+        data-pill1="Open" data-pill2="Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Adulto, Master (Masculino/Feminino)
+Faixas: Branca a Preta"
+        data-premiacao="Medalhas para 1º, 2º e 3º lugar.
+Kit de suplementos para os campeões do absoluto.">
+        <div class="title">Itajaí Open de Verão</div>
+        <div class="loc">Centreventos, Itajaí - SC</div>
+        <div class="meta">
+          <div class="pill">Open</div>
+          <div class="pill">Gi</div>
+        </div>
+      </article>
+
+      <article class="card" tabindex="0" role="button" data-id="original-2" data-title="Blumenau Gi Challenge"
+        data-location="Ginásio Galegão, Blumenau - SC"
+        data-desc="Campeonato focado em lutas de kimono, parte do circuito regional."
+        data-extra="Inscrição: R$100 + 1kg de alimento • 10:00–17:00"
+        data-pill1="Beneficente" data-pill2="Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Juvenil, Adulto
+Faixas: Todas"
+        data-premiacao="Medalhas personalizadas.
+Troféu para a equipe com mais pontos.">
+        <div class="title">Blumenau Gi Challenge</div>
+        <div class="loc">Ginásio Galegão, Blumenau - SC</div>
+        <div class="meta">
+          <div class="pill">Beneficente</div>
+          <div class="pill">Gi</div>
+        </div>
+      </article>
+
+      <article class="card" tabindex="0" role="button" data-id="original-3" data-title="Balneário Superfight Night"
+        data-location="Expocentro, Balneário Camboriú - SC"
+        data-desc="Evento noturno de lutas casadas (superfights) com os melhores atletas da região."
+        data-extra="Apenas convidados e lutas casadas • 19:00"
+        data-pill1="Superfight" data-pill2="No-Gi"
+        data-event-type="closed"
+        data-participantes="Leonardo (Preta),Juliana (Preta),Ricardo (Roxa),Marcelo (Marrom),Bruno (Azul)"
+        data-premiacao="Cinturão do evento para o vencedor da luta principal.
+Bolsa em dinheiro para todos os atletas.">
+        <div class="title">Balneário Superfight Night</div>
+        <div class="loc">Expocentro, Balneário Camboriú - SC</div>
+        <div class="meta">
+          <div class="pill">Superfight</div>
+          <div class="pill">No-Gi</div>
+        </div>
+      </article>
+
+      <!-- NOVOS CARDS -->
+
+      <article class="card" tabindex="0" role="button" data-id="original-4" data-title="Brusque Submission Cup"
+        data-location="Arena Brusque, Brusque - SC"
+        data-desc="Torneio de No-Gi (sem kimono) com regras de submissão."
+        data-extra="Inscrição: R$80 • Início 13:00"
+        data-pill1="Submission" data-pill2="No-Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Adulto (Masculino/Feminino)
+Faixas: Azul a Preta (Absoluto Branca)"
+        data-premiacao="Medalhas e prêmios em dinheiro para o absoluto.">
+        <div class="title">Brusque Submission Cup</div>
+        <div class="loc">Arena Brusque, Brusque - SC</div>
+        <div class="meta">
+          <div class="pill">Submission</div>
+          <div class="pill">No-Gi</div>
+        </div>
+      </article>
+
+      <article class="card" tabindex="0" role="button" data-id="original-5" data-title="Copa Pomerode de Luta"
+        data-location="Pavilhão de Eventos, Pomerode - SC"
+        data-desc="Evento para toda a família na cidade mais alemã do Brasil. Foco nas categorias de base."
+        data-extra="Inscrição: R$60 • 09:00–15:00"
+        data-pill1="Kids" data-pill2="Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Mirim, Infantil, Infanto-Juvenil
+Faixas: Todas"
+        data-premiacao="Medalhas para todos os participantes do Mirim.">
+        <div class="title">Copa Pomerode de Luta</div>
+        <div class="loc">Pavilhão de Eventos, Pomerode - SC</div>
+        <div class="meta">
+          <div class="pill">Kids</div>
+          <div class="pill">Gi</div>
+        </div>
+      </article>
+
+      <article class="card" tabindex="0" role="button" data-id="original-6" data-title="Navegantes BJJ Pro"
+        data-location="Ginásio Municipal, Navegantes - SC"
+        data-desc="Grande campeonato profissional com pontuação para o ranking estadual."
+        data-extra="Inscrição: R$150 • Dia todo"
+        data-pill1="Pro" data-pill2="Gi/No-Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Adulto (Masculino/Feminino)
+Faixas: Azul a Preta"
+        data-premiacao="Prêmio em dinheiro para todos os campeões do absoluto.">
+        <div class="title">Navegantes BJJ Pro</div>
+        <div class="loc">Ginásio Municipal, Navegantes - SC</div>
+        <div class="meta">
+          <div class="pill">Pro</div>
+          <div class="pill">Gi/No-Gi</div>
+        </div>
+      </article>
+
+      <article class="card" tabindex="0" role="button" data-id="original-7" data-title="Tijucas Grappling"
+        data-location="Ginásio D.E.R, Tijucas - SC"
+        data-desc="Evento regional focado em No-Gi, com ênfase em regras ADCC."
+        data-extra="Inscrição: R$70 • Início 14:00"
+        data-pill1="ADCC Rules" data-pill2="No-Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Iniciante, Intermediário, Avançado
+Sem divisão de faixas, apenas tempo de treino."
+        data-premiacao="Medalhas.">
+        <div class="title">Tijucas Grappling</div>
+        <div class="loc">Ginásio D.E.R, Tijucas - SC</div>
+        <div class="meta">
+          <div class="pill">ADCC Rules</div>
+          <div class="pill">No-Gi</div>
+        </div>
+      </article>
+
+      <article class="card" tabindex="0" role="button" data-id="original-8" data-title="Gaspar Jiu-Jitsu Fest"
+        data-location="Ginásio Prefeito João dos Santos, Gaspar - SC"
+        data-desc="Festival de Jiu-Jitsu com lutas e confraternização para todas as idades."
+        data-extra="Inscrição: R$50 • 10:00–16:00"
+        data-pill1="Festival" data-pill2="Gi"
+        data-event-type="open"
+        data-participantes="Categorias: Todas as idades e faixas."
+        data-premiacao="Troféu para a maior equipe.">
+        <div class="title">Gaspar Jiu-Jitsu Fest</div>
+        <div class="loc">Ginásio Prefeito João dos Santos, Gaspar - SC</div>
+        <div class="meta">
+          <div class="pill">Festival</div>
+          <div class="pill">Gi</div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+
+  <!-- MODAL DE DISPLAY (Estrutura Mantida) -->
+  <div class="modal-backdrop" id="modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <div class="modal-content-wrapper">
+
+        <img src="https://placehold.co/720x400/f1c40f/111111?text=Jiu-Jitsu"
+          alt="Placeholder de Jiu-Jitsu" class="modal-placeholder-img"
+          onerror="this.src='https://placehold.co/720x400/eeeeee/999999?text=Imagem+N%C3%A3o+Encontrada'">
+
+        <h2 id="modal-title"></h2>
+        <div class="sub" id="modal-location"></div>
+        <div class="desc" id="modal-desc"></div>
+
+        <div class="meta" style="margin-top: 12px">
+          <div id="modal-extra" class="pill"></div>
+        </div>
+
+        <div class="modal-info-section">
+          <h3>Participantes</h3>
+          <div class="info-box dark-box">
+            <div id="modal-participantes" class="info-box-content"></div>
+          </div>
+        </div>
+
+        <div class="modal-info-section">
+          <h3>Premiação</h3>
+          <div class="info-box">
+            <div id="modal-premiacao" class="info-box-content"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-delete" id="modal-delete" style="display: none;">Deletar</button>
+        <div class="modal-footer-actions">
+          <button class="close" id="modal-close">Fechar</button>
+          <button class="btn" id="modal-action">Como chegar</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DE CRIAÇÃO (Estrutura Mantida) -->
+  <div class="modal-backdrop" id="create-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="create-modal-title">
+
+      <div class="modal-content-wrapper">
+        <form id="create-form">
+
+          <!-- PÁGINA 1: DADOS PRINCIPAIS -->
+          <div id="create-page-1">
+            <h2 id="create-modal-title">Criar nova localização</h2>
+            <div class="sub">Preencha os dados principais.</div>
+            <div class="create-modal-form">
+              
+              <div class="form-group">
+                <label for="new-title">Título*</label>
+                <input type="text" id="new-title" name="title" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="new-location">Localização</label>
+                <input type="text" id="new-location" name="location">
+              </div>
+              
+              <div class="form-group">
+                <label for="new-desc">Descrição*</label>
+                <textarea id="new-desc" name="desc" required></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="new-extra">Informação extra (Ex: Horário, Preço)</label>
+                <input type="text" id="new-extra" name="extra">
+              </div>
+
+              <div class="form-group">
+                <label for="new-event-type">Tipo de Evento (Participantes)</label>
+                <select id="new-event-type" name="eventType">
+                  <option value="open" selected>Aberto (Qualquer um pode se inscrever)</option>
+                  <option value="closed">Fechado (Apenas selecionados)</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="participants-open-group">
+                <label for="new-participantes-open">Participantes (Categorias, Faixas, etc.)</label><br>
+                <textarea id="new-participantes-open" name="participantes_open"></textarea>
+              </div>
+              
+              <div id="participants-closed-group" style="display: none;">
+                <div class="form-group">
+                  <label>Selecionar Participantes (Lutas Casadas / Convidados)</label>
+                  <div class="belt-tabs" id="belt-tabs">
+                    <button type="button" class="belt-tab active" data-belt="branca">Branca</button>
+                    <button type="button" class="belt-tab" data-belt="azul">Azul</button>
+                    <button type="button" class="belt-tab" data-belt="roxa">Roxa</button>
+                    <button type="button" class="belt-tab" data-belt="marrom">Marrom</button>
+                    <button type="button" class="belt-tab" data-belt="preta">Preta</button>
+                  </div>
+                  <div id="fighter-selection-box">
+                    <!-- Lutadores serão injetados aqui pelo JS -->
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label>Participantes Selecionados</label>
+                  <div id="selected-fighters-preview">(Nenhum)</div>
+                  <textarea id="new-participantes-closed" name="participantes_closed" readonly style="display: none;"></textarea>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="new-premiacao">Premiação (Medalhas, Dinheiro, Kits)</label>
+                <textarea id="new-premiacao" name="premiacao"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- PÁGINA 2: TAGS (Pills) -->
+          <div id="create-page-2" style="display: none;">
+            <h2 id="create-modal-title-2">Adicionar tags</h2>
+            <div class="sub">Adicione tags para categorizar o local.</div>
+            <div class="create-modal-form">
+              <div class="form-group">
+                <label for="new-pill1">Tag 1 (Ex: Open, Superfight)</label>
+                <input type="text" id="new-pill1" name="pill1">
+              </div>
+              <div class="form-group">
+                <label for="new-pill2">Tag 2 (Ex: Gi, No-Gi)</label>
+                <input type="text" id="new-pill2" name="pill2">
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Footer do create-modal (fora do scroll) -->
+      <div class="modal-footer" id="create-modal-footer">
+        <form id="create-form-nav">
+          <div class="modal-footer-nav" id="nav-page-1">
+            <button type="button" class="close" id="create-modal-close">Cancelar</button>
+            <button type="button" class="btn" id="next-btn" disabled>Próximo</button>
+          </div>
+          <div class="modal-footer-nav" id="nav-page-2" style="display: none;">
+            <button type="button" class="close" id="back-btn">Voltar</button>
+            <button type="submit" class="btn btn-save" id="save-btn">Salvar</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Script externo (o script.js não precisa ser alterado) -->
+  <script src="competicoes.js" defer></script>
+</body>
+
+</html>
