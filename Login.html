@@ -4,45 +4,23 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <style>
+        * {  margin: 0;  padding: 0;  box-sizing: border-box;  font-family: 'Segoe UI', Arial, sans-serif;}
         body { font-family: sans-serif; align-items: center; background-color: #f0f0f0; }
         .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
         input, button { padding: 10px; margin: 5px; border-radius: 4px; border: 1px solid #ccc; width: 200px; }
         button { background-color: #007bff; color: white; cursor: pointer; border: none; }
         button:hover { background-color: #0056b3; }
         .hidden { display: none; }
-        nav {
-        background: #111; /* Preto */
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        }
+        nav { background: #111; color: white; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000;  }
+        nav .logo {        font-size: 1.5rem;        font-weight: bold;        color: #f1c40f;        }
+        nav ul {        list-style: none;        display: flex;        gap: 1rem;        }
+        nav ul li a {        color: white;        text-decoration: none;        transition: color 0.3s;        }
+        nav ul li a:hover {     color: #f1c40f;        }
 
-        nav .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #f1c40f;
-        }
-
-        nav ul {
-        list-style: none;
-        display: flex;
-        gap: 1rem;
-        }
-
-        nav ul li a {
-        color: white;
-        text-decoration: none;
-        transition: color 0.3s;
-        }
-
-        nav ul li a:hover {
-        color: #f1c40f; /* Amarelo */
-        }
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fff; margin: 10% auto; padding: 25px; border-radius: 8px; width: 90%; max-width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-btn:hover { color: #000; }
     </style>
 </head>
 <body>
@@ -55,6 +33,23 @@
             <input type="password" id="password" placeholder="Senha">
             <button id="login-btn">Entrar</button>
             <p id="message"></p>
+
+            <button id="show-secret-admin-btn" style="background: #ccc; color: #333; margin-top: 20px; font-size: 0.8em;">Modo Teste</button>
+        </div>
+
+        <div id="secret-admin-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="close-secret-admin-modal">&times;</span>
+                <h2>Criação de Admin para testes</h2>
+                <p>Utilize esta função **apenas** em ambiente de teste ou desenvolvimento.</p>
+                <form id="secret-admin-form">
+                    <input type="text" id="secret-admin-username" placeholder="Novo Usuário Admin" required>
+                    <input type="password" id="secret-admin-password" placeholder="Senha Forte" required>
+                    <input type="password" id="admin-secret-key" placeholder="Chave Secreta do Backend" required>
+                    <button type="submit" style="background-color: #dc3545;">Criar/Atualizar Admin</button>
+                    <p id="secret-admin-message" style="margin-top: 10px;"></p>
+                </form>
+            </div>
         </div>
 
         <div id="user-content" class="hidden">
@@ -81,6 +76,57 @@
           .catch(err => console.error('Erro ao carregar o navbar:', err));
     </script>
     <script>
+        const secretAdminModal = document.getElementById('secret-admin-modal');
+        const showSecretAdminBtn = document.getElementById('show-secret-admin-btn');
+        const closeSecretAdminBtn = document.getElementById('close-secret-admin-modal');
+        const secretAdminForm = document.getElementById('secret-admin-form');
+        const secretAdminMessageEl = document.getElementById('secret-admin-message');
+
+        showSecretAdminBtn.onclick = function() {
+            secretAdminModal.style.display = 'block';
+            secretAdminMessageEl.textContent = '';
+            secretAdminMessageEl.style.color = 'initial';
+            secretAdminForm.reset();
+        }
+        closeSecretAdminBtn.onclick = function() { secretAdminModal.style.display = 'none'; }
+        window.onclick = function(event) {
+            if (event.target == secretAdminModal) {
+                secretAdminModal.style.display = 'none';
+            }
+        }
+        secretAdminForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('secret-admin-username').value;
+            const password = document.getElementById('secret-admin-password').value;
+            const secret = document.getElementById('admin-secret-key').value;
+            
+            secretAdminMessageEl.textContent = 'Processando...';
+            secretAdminMessageEl.style.color = 'initial';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/create-admin-secret', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, secret })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    secretAdminMessageEl.style.color = 'green';
+                    secretAdminMessageEl.textContent = 'Sucesso: ' + data.message;
+                    secretAdminForm.reset();
+                } else {
+                    secretAdminMessageEl.style.color = 'red';
+                    secretAdminMessageEl.textContent = 'Erro: ' + (data.message || response.statusText);
+                }
+            } catch (error) {
+                secretAdminMessageEl.style.color = 'red';
+                secretAdminMessageEl.textContent = 'Erro ao conectar com o servidor. Verifique a porta.';
+            }
+        });
+
         document.getElementById('login-btn').addEventListener('click', async () => {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;

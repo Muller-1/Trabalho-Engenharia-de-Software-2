@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <title>Painel do Administrador</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
+        * {  margin: 0;  padding: 0;  box-sizing: border-box;  font-family: 'Segoe UI', Arial, sans-serif;}
+        body { font-family: sans-serif; background-color: #f4f7f6; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #ccc; padding-bottom: 15px; }
         h1 { color: #007bff; }
         .controls button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; }
         .controls button:hover { background-color: #1e7e34; }
         .logout-btn { background-color: #dc3545 !important; }
+        .painel {padding: 20px}
+        .reset-btn { background-color: #ffc107; color: #333; }
+        .reset-btn:hover { background-color: #e0a800; }
 
         /* Estilos do Modal */
         .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
@@ -19,58 +23,30 @@
         input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin: 8px 0 15px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .modal-footer { margin-top: 15px; text-align: right; }
         .register-message { color: green; margin-top: 10px; }
+        .message-error { color: red; margin-top: 10px; }
 
-        nav {
-        background: #111; /* Preto */
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        }
-
-        nav .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #f1c40f;
-        }
-
-        nav ul {
-        list-style: none;
-        display: flex;
-        gap: 1rem;
-        }
-
-        nav ul li a {
-        color: white;
-        text-decoration: none;
-        transition: color 0.3s;
-        }
-
-        nav ul li a:hover {
-        color: #f1c40f; /* Amarelo */
-        }
+        nav { background: #111; color: white; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; position: sticky; top: 0; z-index: 1000;  }
+        nav .logo {        font-size: 1.5rem;        font-weight: bold;        color: #f1c40f;        }
+        nav ul {        list-style: none;        display: flex;        gap: 1rem;        }
+        nav ul li a {        color: white;        text-decoration: none;        transition: color 0.3s;        }
+        nav ul li a:hover {     color: #f1c40f;        }
     </style>
 </head>
 <body>
     <div id="navbar"></div>
 
-    <div class="header">
+    <div class="painel">
         <h1>Painel Administrativo</h1>
         <div class="controls">
             <button id="show-register-modal-btn">Criar Nova Conta</button>
+            <button id="show-password-modal-btn" class="reset-btn">Alterar Senha</button>
             <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
+        <p>Bem-vindo, Administrador. Aqui você pode gerenciar usuários e eventos.</p>
+        <p>Seus links de gerenciamento de eventos ou usuários estariam aqui.</p>
     </div>
 
-    <p>Bem-vindo, Administrador. Aqui você pode gerenciar usuários e eventos.</p>
-    
-
-    <p>Seus links de gerenciamento de eventos ou usuários estariam aqui.</p>
-
+    <!-- Modal de Cadastro de Novo Usuário -->
     <div id="register-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn" id="close-register-modal">&times;</span>
@@ -90,6 +66,26 @@
         </div>
     </div>
 
+    <!-- Modal de Alteração de Senha -->
+    <div id="password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-password-modal">&times;</span>
+            <h2>Alterar Senha de Usuário</h2>
+            <form id="change-password-form">
+                <label for="target-username">Usuário Alvo:</label>
+                <input type="text" id="target-username" placeholder="Ex: admin ou usuario_teste" required>
+
+                <label for="new-password">Nova Senha:</label>
+                <input type="password" id="new-password" required>
+                
+                <div class="modal-footer">
+                    <button type="submit" class="reset-btn" style="color: black;">Alterar Senha</button>
+                </div>
+                <p id="pass-message" class="register-message"></p>
+            </form>
+        </div>
+    </div>
+
     <script>
         fetch('navbar.html')
           .then(response => response.text())
@@ -104,7 +100,14 @@
         const closeModalBtn = document.getElementById('close-register-modal');
         const newUserForm = document.getElementById('new-user-form');
         const regMessageEl = document.getElementById('reg-message');
+
+        const passwordModal = document.getElementById('password-modal');
+        const showPasswordModalBtn = document.getElementById('show-password-modal-btn');
+        const closePasswordModalBtn = document.getElementById('close-password-modal');
+        const changePasswordForm = document.getElementById('change-password-form');
+        const passMessageEl = document.getElementById('pass-message');
         
+        // Abertura e Fechamento do Modal de Cadastro
         showModalBtn.onclick = function() {
             registerModal.style.display = 'block';
             regMessageEl.textContent = '';
@@ -113,6 +116,17 @@
 
         closeModalBtn.onclick = function() {
             registerModal.style.display = 'none';
+        }
+
+        // Abertura e Fechamento do Modal de Senha
+        showPasswordModalBtn.onclick = function() {
+            passwordModal.style.display = 'block';
+            passMessageEl.textContent = '';
+            changePasswordForm.reset();
+        }
+
+        closePasswordModalBtn.onclick = function() {
+            passwordModal.style.display = 'none';
         }
 
         window.onclick = function(event) {
@@ -161,6 +175,42 @@
             } catch (error) {
                 regMessageEl.style.color = 'red';
                 regMessageEl.textContent = 'Erro ao conectar com o servidor.';
+            }
+        });
+
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const targetUsername = document.getElementById('target-username').value;
+            const newPassword = document.getElementById('new-password').value;
+            const token = localStorage.getItem('token');
+
+            passMessageEl.textContent = 'Alterando senha...';
+            passMessageEl.style.color = 'initial';
+
+            try {
+                const response = await fetch('http://localhost:3000/api/change-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-access-token': token // Protegido pelo token de admin
+                    },
+                    body: JSON.stringify({ targetUsername, newPassword })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    passMessageEl.style.color = 'green';
+                    passMessageEl.textContent = 'Sucesso: ' + data.message;
+                    changePasswordForm.reset();
+                } else {
+                    passMessageEl.style.color = 'red';
+                    passMessageEl.textContent = 'Erro: ' + (data.message || response.statusText);
+                }
+            } catch (error) {
+                passMessageEl.style.color = 'red';
+                passMessageEl.textContent = 'Erro ao comunicar com o servidor.';
             }
         });
         
